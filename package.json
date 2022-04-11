@@ -1,10 +1,11 @@
 {
-  "name": "@miraisubject/vue2-builder",
+  "name": "@miraisubject/ixon-vue2-builder",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "author": "",
   "license": "MIT",
+  "repository": "https://github.com/MiraiSubject/ixon-vue2-builder",
   "dependencies": {
     "@vue/cli-service": "4.5.13",
     "is-potential-custom-element-name": "^1.0.1",
@@ -16,5 +17,8 @@
   },
   "peerDependencies": {
     "@ixon-cdk/core": "^1.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
