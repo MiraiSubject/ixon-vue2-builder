@@ -1,9 +1,9 @@
 {
   "name": "@miraisubject/ixon-vue2-builder",
   "version": "1.0.0",
-  "description": "",
+  "description": "Builder for Vue 2 components in the IXON CDK",
   "main": "index.js",
-  "author": "",
+  "author": "MiraiSubject",
   "license": "MIT",
   "repository": "https://github.com/MiraiSubject/ixon-vue2-builder",
   "dependencies": {
