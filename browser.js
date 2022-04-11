@@ -42,7 +42,7 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
         }
     // Additional Options: https://github.com/karol-f/vue-custom-element#options
     });
-    customElements.define('${tag}', e);
+    customElements.get('${tag}')
     `;
 
     fs.writeFileSync(entryFileName, entryFileContent, {
