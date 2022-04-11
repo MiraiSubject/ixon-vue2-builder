@@ -42,7 +42,7 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
         }
     // Additional Options: https://github.com/karol-f/vue-custom-element#options
     });
-    customElements.get('${tag}')
+    customElements.get('${tag}') || customElements.define('${tag}', e)
     `;
 
     fs.writeFileSync(entryFileName, entryFileContent, {
@@ -57,6 +57,12 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
     const config = {
         root: getRootDir(),
         mode: production ? 'production' : 'development',
+        resolve: {
+            alias: {
+                '~@': getRootDir(),
+                '@': getRootDir()
+            },
+        },
         build: {
             lib: {
                 entry: entryFileName,
@@ -75,7 +81,9 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
         },
         write: true,
         plugins: [
-            createVuePlugin(/* options */)
+            createVuePlugin({
+                target: 'lib'
+            })
         ],
     };
 
