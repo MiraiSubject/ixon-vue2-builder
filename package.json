@@ -1,6 +1,6 @@
 {
   "name": "@miraisubject/ixon-vue2-builder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Builder for Vue 2 components in the IXON CDK",
   "main": "index.js",
   "author": "MiraiSubject",
