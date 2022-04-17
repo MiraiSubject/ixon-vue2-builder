@@ -52,7 +52,6 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
     });
 
     cleanDir(outputDir);
-    writeDemoFile(tag, outputDir, outputFile);
 
     await vueBuild(inputDir, outputDir, entryFileName, outputFile, tag, assets);
 
