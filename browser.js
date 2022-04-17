@@ -54,6 +54,28 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
     cleanDir(outputDir);
     writeDemoFile(tag, outputDir, outputFile);
 
+    await vueBuild(inputDir, outputDir, entryFileName, outputFile, tag, assets);
+
+    // watch source files
+    if (watch) {
+        watchAssets(assets, inputDir, outputDir);
+        await watchInputDir(inputDir, (isAsset) => {
+            if (isAsset) {
+                // do nothing
+            } else {
+                vueBuild(inputDir, outputDir, entryFileName, outputFile, tag, assets);
+            }
+        });
+        process.on('SIGINT', () => {
+            fs.unlinkSync(entryFileName);
+            process.exit();
+        });
+    }
+}
+
+async function vueBuild(inputDir, outputDir, entryFileName, outputFile, tag, assets) {
+    writeDemoFile(tag, outputDir, outputFile);
+
     const rawArgs = [
         'build',
         '--target',
@@ -88,7 +110,7 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
 
     try {
         await s.run(command, args, rawArgs)
-    } catch(e) {
+    } catch (e) {
         console.error(e)
     }
 
@@ -103,20 +125,6 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
         await rename(path.join(outputDir, umdNames[i]), path.join(outputDir, umdNames[i].replace(".umd", "")));
     }
 
-    // watch source files
-    if (watch) {
-        watchAssets(assets, inputDir, outputDir);
-        await watchInputDir(inputDir, (isAsset) => {
-            if (isAsset) {
-                // do nothing
-            } else {
-            }
-        });
-        process.on('SIGINT', () => {
-            fs.unlinkSync(entryFileName);
-            process.exit();
-        });
-    }
 }
 
 module.exports = function runBuild(
