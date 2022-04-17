@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { build } = require('vite');
 const {
     getRootDir,
     cleanDir,
@@ -9,8 +8,10 @@ const {
     copyAssets,
     watchAssets,
 } = require('@ixon-cdk/core');
+const minimist = require('minimist');
+const { rename } = require('fs/promises');
 
-const { createVuePlugin } = require('vite-plugin-vue2');
+const Service = require('@vue/cli-service/lib/Service')
 
 async function _build(inputFile, outputFile, tag, assets, production, watch) {
     const inputDir = path.dirname(path.join(getRootDir(), inputFile));
@@ -50,46 +51,57 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
         flag: 'w',
     });
 
-
     cleanDir(outputDir);
     writeDemoFile(tag, outputDir, outputFile);
 
-    const config = {
-        root: getRootDir(),
-        mode: production ? 'production' : 'development',
-        resolve: {
-            alias: {
-                '~@': getRootDir(),
-                '@': getRootDir()
-            },
-        },
-        build: {
-            lib: {
-                entry: entryFileName,
-                formats: ['cjs'],
-                name: 'app',
-                fileName: () => `${tag}.min.js`,
-            },
-            sourcemap: true,
-            outDir: outputDir,
-            emptyOutDir: false,
-            rollupOptions: {
-                output: {
-                    inlineDynamicImports: true,
-                },
-            },
-        },
-        write: true,
-        plugins: [
-            createVuePlugin({
-                target: 'lib'
-            })
-        ],
-    };
+    const rawArgs = [
+        'build',
+        '--target',
+        'lib',
+        '--inline-vue',
+        '--dest',
+        outputDir,
+        '--name',
+        tag,
+        entryFileName
+    ];
 
-    // build
-    await build(config);
+    const args = minimist(rawArgs, {
+        boolean: [
+            // build
+            'modern',
+            'report',
+            'report-json',
+            'inline-vue',
+            'watch',
+            // serve
+            'open',
+            'copy',
+            'https',
+            // inspect
+            'verbose',
+        ],
+    });
+
+    const s = new Service(getRootDir());
+    const command = args._[0];
+
+    try {
+        await s.run(command, args, rawArgs)
+    } catch(e) {
+        console.error(e)
+    }
+
+    // // build
+    // await build(config);
     copyAssets(assets, inputDir, outputDir);
+
+    const umdNames = [`${tag}.umd.js`,
+    `${tag}.umd.min.js`];
+
+    for (let i = 0; i < umdNames.length; i++) {
+        await rename(path.join(outputDir, umdNames[i]), path.join(outputDir, umdNames[i].replace(".umd", "")));
+    }
 
     // watch source files
     if (watch) {
@@ -98,7 +110,6 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
             if (isAsset) {
                 // do nothing
             } else {
-                build(config);
             }
         });
         process.on('SIGINT', () => {

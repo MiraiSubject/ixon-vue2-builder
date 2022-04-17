@@ -9,8 +9,7 @@
   "dependencies": {
     "@vue/cli-service": "4.5.13",
     "is-potential-custom-element-name": "^1.0.1",
-    "sass": "^1.43.4",
-    "vite-plugin-vue2": "^1.9.3",
+    "minimist": "^1.2.6",
     "vue": "^2.6.14",
     "vue-custom-element": "^3.3.0",
     "vue-template-compiler": "^2.6.14"
