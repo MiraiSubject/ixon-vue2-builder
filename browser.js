@@ -43,7 +43,11 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
         }
     // Additional Options: https://github.com/karol-f/vue-custom-element#options
     });
-    customElements.get('${tag}') || customElements.define('${tag}', e)
+
+    // in production the vue-custom-element definition gets concatenated in so we don't want this.
+    if (process.env.NODE_ENV === 'development') {
+        customElements.get('${tag}') || customElements.define('${tag}', e)
+    }
     `;
 
     fs.writeFileSync(entryFileName, entryFileContent, {
