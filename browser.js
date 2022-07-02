@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { writeFile } = require('fs/promises');
 const path = require('path');
 const {
     getRootDir,
@@ -11,7 +12,25 @@ const {
 const minimist = require('minimist');
 const { rename } = require('fs/promises');
 
-const Service = require('@vue/cli-service/lib/Service')
+const Service = require('@vue/cli-service/lib/Service');
+
+// Generate our own demo, because --target lib generates an unusable demo.html (Related: https://github.com/vuejs/vue-cli/issues/3291)
+async function generateDemo(module, outPath) {
+    const demo = `<!DOCTYPE html><head><meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>${module} demo</title>
+        <script src="./${module}.min.js"></script></head>
+        <html>
+        <body>
+        <${module}></${module}>
+        </body></html>`;
+
+    try {
+        await writeFile(path.join(outPath, 'demo.html'), demo);
+    } catch (e) {
+        console.error(`Error writing demo file for ${tag} | ${e}`);
+    }
+}
 
 async function _build(inputFile, outputFile, tag, assets, production, watch) {
     const inputDir = path.dirname(path.join(getRootDir(), inputFile));
@@ -128,6 +147,7 @@ async function vueBuild(inputDir, outputDir, entryFileName, outputFile, tag, ass
         await rename(path.join(outputDir, umdNames[i]), path.join(outputDir, umdNames[i].replace(".umd", "")));
     }
 
+    await generateDemo(tag, outputDir);
 }
 
 module.exports = function runBuild(
