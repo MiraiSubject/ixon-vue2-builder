@@ -7,12 +7,11 @@
   "license": "MIT",
   "repository": "https://github.com/MiraiSubject/ixon-vue2-builder",
   "dependencies": {
-    "@vue/cli-service": "4.5.13",
+    "@vue/cli-service": "~4.5.18",
     "is-potential-custom-element-name": "^1.0.1",
     "minimist": "^1.2.6",
     "vue": "^2.7.10",
-    "vue-custom-element": "^3.3.0",
-    "vue-template-compiler": "^2.6.14"
+    "vue-custom-element": "^3.3.0"
   },
   "peerDependencies": {
     "@ixon-cdk/core": "^1.0.0"
