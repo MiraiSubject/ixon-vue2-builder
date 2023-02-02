@@ -76,15 +76,11 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
 
     cleanDir(outputDir);
 
-    await vueBuild(inputDir, outputDir, entryFileName, outputFile, tag, assets);
-
     // watch source files
     if (watch) {
         watchAssets(assets, inputDir, outputDir);
         await watchInputDir(inputDir, (isAsset) => {
-            if (isAsset) {
-                // do nothing
-            } else {
+            if (!isAsset) {
                 vueBuild(inputDir, outputDir, entryFileName, outputFile, tag, assets);
             }
         });
@@ -92,6 +88,8 @@ async function _build(inputFile, outputFile, tag, assets, production, watch) {
             fs.unlinkSync(entryFileName);
             process.exit();
         });
+    } else {
+        await vueBuild(inputDir, outputDir, entryFileName, outputFile, tag, assets);
     }
 }
 
